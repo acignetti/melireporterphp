@@ -149,7 +149,7 @@ class Main {
                     $params['username'],
                     $params['password']
                 );
-            case 'updateUserData':
+            case 'updateUserData': {
                 $meliCode = $_GET['code'];
 
                 $meli     = new \MeLi(__APPID__, __APPSECRET__);
@@ -178,7 +178,14 @@ class Main {
                     $response['body']->access_token
                 );
 
+                core\UserManager::processUserSales(
+                    $meli,
+                    $response['body']->x_ml_user_id,
+                    $response['body']->access_token
+                );
+
                 return core\General::createResponse(true, "All your data is now synced with us");
+            }
         }
 
         return core\General::createResponse(false, 'Bad request ');

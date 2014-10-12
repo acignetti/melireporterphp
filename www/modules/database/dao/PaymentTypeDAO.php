@@ -6,6 +6,8 @@ class PaymentTypeDAO extends \Reporter\modules\database\Connector {
     private static $_resultSet = array();
 
     public static function getPayments($id = null) {
+        self::$_resultSet = array();
+
         $query = 'SELECT * FROM payment_type';
 
         if ($id !== null) {

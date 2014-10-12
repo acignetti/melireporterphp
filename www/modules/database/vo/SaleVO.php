@@ -4,8 +4,10 @@ namespace Reporter\modules\database\vo;
 class SaleVO implements \JsonSerializable {
 
     private $_id;
+    private $_ml_id;
     private $_user_id;
     private $_item_id;
+    private $_buyer_id;
     private $_payment_id;
     private $_quantity;
     private $_bought_on;
@@ -30,12 +32,20 @@ class SaleVO implements \JsonSerializable {
         $this->_id = $newValue;
     }
 
+    public function setMLID ($newValue) {
+        $this->_id = $newValue;
+    }
+
     public function setUserId ($newValue) {
         $this->_user_id = $newValue;
     }
 
     public function setItemId ($newValue) {
         $this->_item_id = $newValue;
+    }
+
+    public function setBuyerId ($newValue) {
+        $this->_buyer_id = $newValue;
     }
 
     public function setPaymentId ($newValue) {
@@ -66,8 +76,16 @@ class SaleVO implements \JsonSerializable {
         return $this->_id;
     }
 
+    public function getMLID () {
+        return $this->_id;
+    }
+
     public function getUserId () {
         return $this->_user_id;
+    }
+
+    public function getBuyerId () {
+        return $this->_buyer_id;
     }
 
     public function getItemId () {

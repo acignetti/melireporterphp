@@ -6,6 +6,7 @@ class BuyerVO implements \JsonSerializable {
     private $_id;
     private $_ml_id;
     private $_name;
+    private $_real_name;
     private $_last_name;
     private $_email;
     private $_address;
@@ -35,6 +36,10 @@ class BuyerVO implements \JsonSerializable {
         $this->_name = $newValue;
     }
 
+    public function setRealName ($newValue) {
+        $this->_real_name = $newValue;
+    }
+
     public function setLastName ($newValue) {
         $this->_last_name = $newValue;
     }
@@ -51,27 +56,31 @@ class BuyerVO implements \JsonSerializable {
         $this->_synced = $newValue;
     }
 
-    public function getID ($newValue) {
+    public function getID () {
         return $this->_id;
     }
 
-    public function getMLID ($newValue) {
+    public function getMLID () {
         return $this->_ml_id;
     }
 
-    public function getName ($newValue) {
+    public function getName () {
         return $this->_name;
     }
 
-    public function getLastName ($newValue) {
+    public function getLastName () {
         return $this->_last_name;
     }
 
-    public function getEmail ($newValue) {
+    public function getRealName () {
+        return $this->_real_name;
+    }
+
+    public function getEmail () {
         return $this->_email;
     }
 
-    public function getAddress ($newValue) {
+    public function getAddress () {
         return $this->_address;
     }
 
@@ -80,6 +89,7 @@ class BuyerVO implements \JsonSerializable {
 
         $toReturn->buyer_id        = $this->_id;
         $toReturn->buyer_name      = $this->_name;
+        $toReturn->buyer_real_name = $this->_real_name;
         $toReturn->buyer_last_name = $this->_last_name;
         $toReturn->buyer_email     = $this->_email;
         $toReturn->buyer_address   = $this->_address;

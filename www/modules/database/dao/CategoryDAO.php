@@ -6,6 +6,8 @@ class CategoryDAO extends \Reporter\modules\database\Connector {
     private static $_resultSet = array();
 
     public static function getCategories($id = null) {
+        self::$_resultSet = array();
+
         $query = 'SELECT * FROM categories WHERE category_father = ';
 
         if ($id !== null) {
@@ -34,7 +36,9 @@ class CategoryDAO extends \Reporter\modules\database\Connector {
     }
 
     public static function getCategoriesByMLID($mlID) {
-        $query = 'SELECT * FROM categories WHERE category_ml_ID = "' . $mlID . '"';
+        self::$_resultSet = array();
+
+        $query = 'SELECT * FROM categories WHERE category_ml_id = "' . $mlID . '"';
 
         $results = self::_execute($query);
 
