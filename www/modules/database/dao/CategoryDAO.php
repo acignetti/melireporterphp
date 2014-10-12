@@ -61,7 +61,7 @@ class CategoryDAO extends \Reporter\modules\database\Connector {
 
     public static function save(\Reporter\modules\database\vo\CategoryVO & $valueObject) {
         if ($valueObject->getID()) {
-            $query  = 'UPDATE categories SET '; // (category_ml_id, category_name, category_father) '
+            $query  = 'UPDATE categories SET blah blah';
         } else {
             $query  = 'INSERT INTO categories (category_ml_id, category_name, category_father) VALUES ';
             $query .= "('{$valueObject->getMLID()}','{$valueObject->getName()}','{$valueObject->getFather()}')";

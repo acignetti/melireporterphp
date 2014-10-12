@@ -39,6 +39,25 @@ class Main {
                     "accessToken" => $accessToken
                 ]
             );
+         });
+
+        /**
+         * Item list for current user
+         */
+        self::$_slimInstance->get('/item/:username/:access_token', function($accessToken) {
+            echo core\General::createResponse(
+                true,
+                'Item list',
+                'items',
+                database\dao\ItemDAO::getItems()
+            );
+        });
+
+        /**
+         * One item information if belongs to current user
+         */
+        self::$_slimInstance->get('/item/:username/:access_token/:id', function($id, $accessToken) {
+            echo core\General::createResponse(true, 'One item', 'item1');
         });
 
         /**
@@ -89,6 +108,58 @@ class Main {
             );
         });
 
+        /**
+         * Retrieves all buyers related to our client of course
+         */
+        self::$_slimInstance->get('/buyer/:username/:access_token', function($username, $accessToken) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(
+                true,
+                'Your buyers',
+                'buyers',
+                database\dao\BuyerDAO::getBuyers($username)
+            );
+        });
+
+        /**
+         * Retrieves only one buyer information, if he's related to the user
+         */
+        self::$_slimInstance->get('/buyer/:username/:access_token/:id', function($username, $accessToken, $id) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(
+                true,
+                'Your buyers',
+                'buyers',
+                database\dao\BuyerDAO::getBuyers($username, $id)
+            );
+        });
+
+        /**
+         * Current user's sale list
+         */
+        self::$_slimInstance->get('/sale/:username/:access_token', function($username, $accessToken) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(
+                true,
+                'Current user\'s sale list',
+                'sales',
+                database\dao\SaleDAO::getSales($username)
+            );
+        });
+
+        /**
+         * Information about one sale, if it belongs to the user
+         */
+        self::$_slimInstance->get('/sale/:username/:access_token/:id', function($username, $accessToken, $id) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(
+                true,
+                'Current user\'s sale list',
+                'sales',
+                database\dao\SaleDAO::getSales($username, $id)
+            );
+        });
+    }
 
     private static function loadDeleteRoutes() {
         /**

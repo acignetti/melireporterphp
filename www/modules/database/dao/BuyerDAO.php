@@ -5,17 +5,19 @@ class BuyerDAO extends \Reporter\modules\database\Connector {
 
     private static $_resultSet = array();
 
-    public static function getBuyers($id = null) {
+    public static function getBuyers($username, $id = null) {
         self::$_resultSet = array();
 
-        $query = 'SELECT * FROM buyers';
+        $query = "SELECT DISTINCT bu.*
+            FROM buyers bu
+            INNER JOIN sales sa ON bu.buyer_id = sa.sale_buyer_id
+            INNER JOIN users us ON sa.sale_user_id = us.user_id
+            WHERE us.user_name = '{$username}'";
 
-        if ($id != 0) {
-            $query = 'SELECT * FROM buyers WHERE buyer_synced = 0';
-        }
-
-        if ($id !== null) {
-            $query .= ' WHERE buyer_id = ' . $id;
+        if ($id !== null && $id != 0) {
+            $query .= " AND bu.buyer_id = {$id} ";
+        } elseif ($id != 0) {
+            $query .= " AND bu.buyer_synced = 0";
         }
 
         $results = self::_execute($query);

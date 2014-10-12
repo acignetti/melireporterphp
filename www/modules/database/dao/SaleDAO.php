@@ -5,30 +5,18 @@ class SaleDAO extends \Reporter\modules\database\Connector {
 
     private static $_resultSet = array();
 
-    private $_id;
-    private $_ml_id;
-    private $_user_id;
-    private $_item_id;
-    private $_buyer_id;
-    private $_payment_id;
-    private $_quantity;
-    private $_bought_on;
-    private $_paid_on;
-    private $_status;
-    private $_total;
-    private $_synced;
-
-    public static function getSales($id = null) {
+    public static function getSales($username, $id = null) {
         self::$_resultSet = array();
 
-        $query = 'SELECT * FROM sales';
+        $query = "SELECT *
+            FROM sales sa
+            INNER JOIN users us ON sa.sale_user_id = us.user_id
+            WHERE us.user_name = '{$username}'";
 
-        if ($id != 0) {
-            $query = 'SELECT * FROM sales WHERE sale_synced = 0';
-        }
-
-        if ($id !== null) {
-            $query .= ' WHERE sale_id = ' . $id;
+        if ($id !== null && $id != 0) {
+            $query .= " AND sa.sale_id = {$id} ";
+        } elseif ($id != 0) {
+            $query .= " AND sa.sale_synced = 0";
         }
 
         $results = self::_execute($query);
