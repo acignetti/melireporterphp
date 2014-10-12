@@ -5,6 +5,7 @@ class PaymentTypeVO implements \JsonSerializable {
 
     private $_id;
     private $_name;
+    private $_category;
     private $_description;
     private $_status;
 
@@ -28,6 +29,10 @@ class PaymentTypeVO implements \JsonSerializable {
         $this->_description = $newValue;
     }
 
+    public function setCategory ($newValue) {
+        $this->_description = $newValue;
+    }
+
     public function setStatus ($newValue) {
         $this->_status = $newValue;
     }
@@ -48,12 +53,17 @@ class PaymentTypeVO implements \JsonSerializable {
         return $this->_status;
     }
 
+    public function getCategory () {
+        return $this->_status;
+    }
+
     public function getObject() {
         $toReturn = new \stdClass;
 
         $toReturn->payment_id          = $this->_id;
         $toReturn->payment_name        = $this->_name;
         $toReturn->payment_description = $this->_description;
+        $toReturn->payment_category    = $this->_category;
         $toReturn->payment_status      = $this->_status;
 
         return $toReturn;

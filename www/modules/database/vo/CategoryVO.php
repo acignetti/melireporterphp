@@ -4,9 +4,10 @@ namespace Reporter\modules\database\vo;
 class CategoryVO implements \JsonSerializable {
 
     private $_id;
+    private $_ml_id;
     private $_name;
     private $_description;
-    private $_father;
+    private $_father = 0;
     private $_status;
 
     public function __tostring() {
@@ -19,6 +20,10 @@ class CategoryVO implements \JsonSerializable {
 
     public function setID ($newValue) {
         $this->_id = $newValue;
+    }
+
+    public function setMLID ($newValue) {
+        $this->_ml_id = $newValue;
     }
 
     public function setName ($newValue) {
@@ -39,6 +44,10 @@ class CategoryVO implements \JsonSerializable {
 
     public function getID () {
         return $this->_id;
+    }
+
+    public function getMLID () {
+        return $this->_ml_id;
     }
 
     public function getName () {
