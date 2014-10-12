@@ -48,8 +48,6 @@ foreach ($categories as $father) {
     $currentCategory->setMLID($father->id);
 
     \Reporter\modules\database\dao\CategoryDAO::save($currentCategory);
-
-    processChildrens($myMeLi, $currentCategory);
 }
 
 foreach ($payments as $current) {
@@ -57,9 +55,15 @@ foreach ($payments as $current) {
 
     $payment->setName($current->id);
     $payment->setDescription($current->name);
-    $payment->setCategory($current->type);
+    $payment->setCategory($current->payment_type_id);
 
     \Reporter\modules\database\dao\PaymentTypeDAO::save($payment);
+}
+
+$root = \Reporter\modules\database\dao\CategoryDAO::getCategories();
+
+foreach ($root as $father) {
+    processChildrens($myMeLi, $father);
 }
 
 echo "Listo";

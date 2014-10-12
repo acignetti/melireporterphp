@@ -1,0 +1,176 @@
+<?php
+namespace Reporter\modules;
+
+require __DIR__ . '/core/Configuration.php';
+require __DIR__ . '/core/Autoloader.php';
+require __DIR__ . '/core/meli.php';
+
+class Main {
+
+    private static $_slimInstance;
+
+    private static function loadPostRoutes() {
+        /**
+         * Login, echoes user access token for this session
+         */
+        self::$_slimInstance->post('/user/:username/:password', function ($username, $password) {
+            echo self::processRequest(
+                'login',
+                [
+                    'username' => $username,
+                    'password' => $password
+                ]
+            );
+        });
+    }
+
+    private static function loadGetRoutes() {
+
+        /**
+         * I couldn't use MeLi api to send me the code through POST so I use get
+         */
+        self::$_slimInstance->get('/user/:username/:access_token/appID', function($username, $accessToken) {
+            $meliCode = $_GET['code'];
+
+            $meli     = new \MeLi(__APPID__, __APPSECRET__);
+
+            /**
+             * This is because MeLi's API didn't work as it was supposed to
+             */
+            $response = $meli->post(
+                "https://api.mercadolibre.com/oauth/token?" .
+                "grant_type=authorization_code" .
+                "&client_id=" . __APPID__ .
+                "&client_secret=" . __APPSECRET__ .
+                "&code=" . $meliCode .
+                "&redirect_uri=http://10.50.209.14/index.php/user/".$username."/".$accessToken."/appID"
+            );
+
+            echo self::processRequest(
+                'registerToken',
+                [
+                    "username"    => $username,
+                    "accessToken" => $response['body']->access_token
+                ]
+            );
+        });
+
+        /**
+         * Retrieves all categories, no need for user
+         */
+        self::$_slimInstance->get('/category', function() {
+            echo core\General::createResponse(
+                true,
+                'Category list',
+                'category',
+                database\dao\CategoryDAO::getCategories()
+            );
+        });
+
+        /**
+         * Retrieves only one category, just in case
+         */
+        self::$_slimInstance->get('/category/:id', function($id) {
+            echo core\General::createResponse(
+                true,
+                'Only one category',
+                'category',
+                database\dao\CategoryDAO::getCategories($id)
+            );
+        });
+
+        /**
+         * Retrieves all payment_types, no need for user
+         */
+        self::$_slimInstance->get('/payment_type', function() {
+            echo core\General::createResponse(
+                true,
+                'Payment types',
+                'payment_type',
+                database\dao\PaymentTypeDAO::getPayments()
+            );
+        });
+
+        /**
+         * Retrieves only one payment_type, just in case
+         */
+        self::$_slimInstance->get('/payment_type/:id', function($id) {
+            echo core\General::createResponse(
+                true,
+                'Only one Payment type',
+                'payment_type',
+                database\dao\PaymentTypeDAO::getPayments($id)
+            );
+        });
+
+
+    private static function loadDeleteRoutes() {
+        /**
+         * Logout of our system, sad to see you leave :_(
+         */
+        self::$_slimInstance->delete('/user/:username/:access_token', function($username, $accessToken) {
+            core\UserManager::validateUser($username, $accessToken);
+            core\UserManager::logOut($accessToken);
+            echo core\General::createResponse(true, 'It\'s hard to see you leave');
+        });
+    }
+
+    private static function loadPutRoutes() {
+        /**
+         * We don't have any... Yet
+         */
+    }
+
+    public static function setUpEnvironment() {
+        \Reporter\modules\core\Configuration::loadConfiguration();
+        spl_autoload_register(__NAMESPACE__ . "\\core\\Autoloader::autoload");
+    }
+
+    public static function loadRoutes() {
+        try {
+            \Slim\Slim::registerAutoloader();
+
+            self::$_slimInstance  = new \Slim\Slim();
+
+            self::$_slimInstance->response->headers->set('Content-Type', 'application/json');
+
+            self::loadPutRoutes();
+            self::loadGetRoutes();
+            self::loadPostRoutes();
+            self::loadDeleteRoutes();
+
+            /**
+             * Finally, we map every default route and non existent ones to a bad
+             * request so we don't blow up the android app
+             */
+            self::$_slimInstance->map('/:nothing+', function (){
+                echo self::processRequest('goToDefault');
+            })->via('GET', 'POST', 'DELETE', 'PUT');
+
+            self::$_slimInstance->run();
+        } catch (Exception $general) {
+            echo core\General::createResponse(false,
+                'Something bad happened',
+                 $general->getTraceAsString()
+            );
+        }
+    }
+
+    public static function processRequest($operation, $params = null) {
+        switch ($operation) {
+            case 'login':
+                return core\UserManager::logIn(
+                    $params['username'],
+                    $params['password']
+                );
+            case 'registerToken':
+                return core\UserManager::registerAccessToken(
+                    $params['username'],
+                    $params['accessToken']
+                );
+        }
+
+        return core\General::createResponse(false, 'Bad request ');
+    }
+
+}
