@@ -10,11 +10,11 @@ require __DIR__ . '/../Main.php';
 
 \Reporter\modules\Main::setUpEnvironment();
 
-define('__COUTRY__',    'MLA');
-define('__APPID__',     '6283809452926869');
-define('__APPSECRET__', '7jCwBNkyhBeMiydwPNGxTiNfl1Sd4CW6');
+// define('__COUTRY__',    'MLA');
+// define('__APPID__',     '6283809452926869');
+// define('__APPSECRET__', '7jCwBNkyhBeMiydwPNGxTiNfl1Sd4CW6');
 
-require __DIR__ . '/meli.php';
+// require __DIR__ . '/meli.php';
 
 $finalCategories = array();
 
