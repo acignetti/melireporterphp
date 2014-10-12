@@ -170,9 +170,9 @@ class Main {
         /**
          * Our most important section of the system, reports for everyone, YAY!!
          */
-        self::$_slimInstance->get('/report/:username/:access_token', function($username, $accessToken) {
+        self::$_slimInstance->get('/report/:username/:access_token/:type/:id+', function($username, $accessToken, $type, $ids) {
             core\UserManager::validateUser($username, $accessToken);
-            echo core\General::createResponse(false, 'We are not functional yet :_(');
+            echo core\Report::createReport($type, $username, $ids);
         });
     }
 
