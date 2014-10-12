@@ -44,20 +44,27 @@ class Main {
         /**
          * Item list for current user
          */
-        self::$_slimInstance->get('/item/:username/:access_token', function($accessToken) {
+        self::$_slimInstance->get('/item/:username/:access_token', function($username, $accessToken) {
+            core\UserManager::validateUser($username, $accessToken);
             echo core\General::createResponse(
                 true,
                 'Item list',
                 'items',
-                database\dao\ItemDAO::getItems()
+                database\dao\ItemDAO::getItems($username)
             );
         });
 
         /**
          * One item information if belongs to current user
          */
-        self::$_slimInstance->get('/item/:username/:access_token/:id', function($id, $accessToken) {
-            echo core\General::createResponse(true, 'One item', 'item1');
+        self::$_slimInstance->get('/item/:username/:access_token/:id', function($username, $accessToken, $id) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(
+                true,
+                'One item',
+                'items',
+                database\dao\ItemDAO::getItems($username, $id)
+            );
         });
 
         /**
@@ -158,6 +165,14 @@ class Main {
                 'sales',
                 database\dao\SaleDAO::getSales($username, $id)
             );
+        });
+
+        /**
+         * Our most important section of the system, reports for everyone, YAY!!
+         */
+        self::$_slimInstance->get('/report/:username/:access_token', function($username, $accessToken) {
+            core\UserManager::validateUser($username, $accessToken);
+            echo core\General::createResponse(false, 'We are not functional yet :_(');
         });
     }
 

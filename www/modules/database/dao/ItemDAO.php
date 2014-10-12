@@ -5,19 +5,20 @@ class ItemDAO extends \Reporter\modules\database\Connector {
 
     private static $_resultSet = array();
 
-    public static function getItems($id = null) {
+    public static function getItems($username, $id = null) {
         self::$_resultSet = array();
 
-        $query = 'SELECT * FROM items';
+        $query = "SELECT *
+            FROM items it
+            INNER JOIN sales sa ON it.item_id = sa.sale_item_id
+            INNER JOIN users us ON sa.sale_user_id = us.user_id
+            WHERE us.user_name = '{$username}'";
 
-        if ($id !== 0) {
-            $query = 'SELECT * FROM items WHERE item_synced = 0';
+        if ($id !== null && $id != 0) {
+            $query .= " AND it.item_id = {$id} ";
+        } elseif ($id != 0) {
+            $query .= " AND it.item_synced = 0";
         }
-
-        if ($id !== null) {
-            $query .= ' WHERE item_id = ' . $id;
-        }
-
         $results = self::_execute($query);
 
         if ($results) {
