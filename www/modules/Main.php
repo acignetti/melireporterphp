@@ -28,29 +28,15 @@ class Main {
 
         /**
          * I couldn't use MeLi api to send me the code through POST so I use get
+         * This function loads all the user data into our DB
          */
         self::$_slimInstance->get('/user/:username/:access_token/appID', function($username, $accessToken) {
-            $meliCode = $_GET['code'];
-
-            $meli     = new \MeLi(__APPID__, __APPSECRET__);
-
-            /**
-             * This is because MeLi's API didn't work as it was supposed to
-             */
-            $response = $meli->post(
-                "https://api.mercadolibre.com/oauth/token?" .
-                "grant_type=authorization_code" .
-                "&client_id=" . __APPID__ .
-                "&client_secret=" . __APPSECRET__ .
-                "&code=" . $meliCode .
-                "&redirect_uri=http://10.50.209.14/index.php/user/".$username."/".$accessToken."/appID"
-            );
-
+            core\UserManager::validateUser($username, $accessToken);
             echo self::processRequest(
-                'registerToken',
+                'updateUserData',
                 [
                     "username"    => $username,
-                    "accessToken" => $response['body']->access_token
+                    "accessToken" => $accessToken
                 ]
             );
         });
@@ -163,11 +149,36 @@ class Main {
                     $params['username'],
                     $params['password']
                 );
-            case 'registerToken':
-                return core\UserManager::registerAccessToken(
-                    $params['username'],
-                    $params['accessToken']
+            case 'updateUserData':
+                $meliCode = $_GET['code'];
+
+                $meli     = new \MeLi(__APPID__, __APPSECRET__);
+
+                /**
+                 * This is because MeLi's API didn't work as it was supposed to
+                 */
+                $response = $meli->post(
+                    "https://api.mercadolibre.com/oauth/token?" .
+                    "grant_type=authorization_code" .
+                    "&client_id=" . __APPID__ .
+                    "&client_secret=" . __APPSECRET__ .
+                    "&code=" . $meliCode .
+                    "&redirect_uri=http://10.50.209.14/index.php/user/".$params['username']."/".$params['accessToken']."/appID"
                 );
+
+                core\UserManager::registerAccessToken(
+                    $params['username'],
+                    $response['body']->access_token,
+                    $response['body']->x_ml_user_id
+                );
+
+                core\UserManager::processUserItems(
+                    $meli,
+                    $response['body']->x_ml_user_id,
+                    $response['body']->access_token
+                );
+
+                return core\General::createResponse(true, "All your data is now synced with us");
         }
 
         return core\General::createResponse(false, 'Bad request ');

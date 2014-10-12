@@ -63,7 +63,8 @@ class UserDAO extends \Reporter\modules\database\Connector {
 
     public static function save(\Reporter\modules\database\vo\UserVO & $valueObject) {
         if ($valueObject->getID()) {
-            $query  = "UPDATE users SET user_token = '{$valueObject->getToken()}' ";
+            $query  = "UPDATE users SET user_token = '{$valueObject->getToken()}', ";
+            $query .= "user_ml_id = '{$valueObject->getMLID()}' ";
             $query .= "WHERE user_id = {$valueObject->getID()}";
         } else {
             $query = 'INSERT INTO blah blah';

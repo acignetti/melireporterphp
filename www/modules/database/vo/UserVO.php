@@ -4,6 +4,7 @@ namespace Reporter\modules\database\vo;
 class UserVO implements \JsonSerializable {
 
     private $_id;
+    private $_ml_id;
     private $_name;
     private $_password;
     private $_email;
@@ -23,6 +24,10 @@ class UserVO implements \JsonSerializable {
 
     public function setID ($newValue) {
         $this->_id = $newValue;
+    }
+
+    public function setMLID ($newValue) {
+        $this->_ml_id = $newValue;
     }
 
     public function setName ($newValue) {
@@ -59,6 +64,10 @@ class UserVO implements \JsonSerializable {
 
     public function getID () {
         return $this->_id;
+    }
+
+    public function getMLID () {
+        return $this->_ml_id;
     }
 
     public function getName () {
